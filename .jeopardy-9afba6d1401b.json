@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "jeopardy-293618",
+  "private_key_id": "9afba6d1401be89648a9c203eb802b05837db06e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCUSsAa3kf+wSe2\nb3W5rmNcNMHOD70vHxq9rB3hIjgguKcYZEtjUK/FhOqqfhT0O8kbHzbXcEoqrLY1\nZLEzJYgzwL+FJlo4CBrI/x0G34yWFsNRZ6WYSFUlDXMgRV/Kigye28FtEVPxocgR\nWZ3k40xzrjgDG8aVzRuOmHbAO+YpV5C2Ygk5d77dwuhMALX1oMsBjhfpQwD58lHC\nV/rJ+JdruKMFymne/ZQCepSiw9uBtaJ1keihu6JuoM+ZODDcsZ/vJt7czymPPKfd\nYvQG51nJZ625oYkMYhXZBtz8XZcRRzYY9oeFvc5bXzoYVtJ95xbYosceVApkr+yY\n9EX+LcdBAgMBAAECggEAAI0GXusuY7QXvSH3nd2XxVD1sIRm3g48u7w66FonpiPN\nd3Ca8Ow3hPGIFiNNrwpq+4tE2W1zkb+ZFdnGiJOQ00FkbL6+WnjZkZ9/U1DWCBI0\nU6DMZjm25Zeh0s/ofyX+uJcwJiMIokGJDtsb1CzN0kcGcqjXdrkU9hVbU+jnuLBW\n7gxdlTxcSFGcwykupRJAmPwwVnHLEewBg27/80pl8FyD+S5t59e8RzaagKOHxuQY\nnqgb5K5ix2Nm45Z1jPVZmZs0Vg9yeFlcCoN0l27PCyg+2cKp3wsHUIWVqy4RUgZf\nMhNqPgnEL8VmrYBp9dySpgF9O1XTfmoDW+oPOphZYQKBgQDJICfnSbAFJnHMcgq8\nuMl9cFQYwzWoMHFPf5l3SNgFf1m2/run6TsMpMQcMzSBzm2YfGh07Qo20jkmnj1M\nxIssFTZlZSub1vi2X45ncGj8AJWDKEHORPMERU5suxJUFRdVBbnHP8EKFW8eFHf9\n9LQERwBiEH8M91ZxmajCa5wWUQKBgQC8wF8PeO5OOrEEmyW3E4CBwwwt43MycYj2\nlRlUMANeQfEf9UjDKeFr3ItwKcZhc0W/1qjaDgqIzxT0voCYNYWY1O5jXrfOmitv\nlnT4T3Iq0l/7J+afh3DLr5qe21ryRYwMl75HT5LD+I80bwdPRf/BvRVqzYqDHHaX\ngh50eD418QKBgDFOy9mdLCUnFrEbqFw6JVO2bTeg7A+uyKjHzJT869D1NsZxTwpM\nWKix4E5Vk2Lbe+ztWyKHVoC4K0C3fKnMaZ5GGQ7krbtICbOUW7IqUeKuNflwrilm\np/l9EEwB1O1+Ojki7TfW/nl9Zb+HHx/IlTWTPpnMF4nTPYMeO8xmW17xAoGAEMj6\nqyGR75sAiuxRGkq9rsxtlNcZM28tQuBXdEkgw40RqEnjwpdC2JiwPbU5UwkxNrIc\nKef9v9TKhEk8nkyEKOcmm+ecaN8E5dN3a22FNZGnv2n49E7TFQn0shPHrqvInIYS\nAb1ty8ea1IrbF42eBNiPwwOsQaSSVz7W/nyC68ECgYA2K1NVd3cSumktiDzPLcqT\n5vHIVmJ63JVe8z5pFYn335kI3biRuP8N9VqyC3y+1czVOlmztPwaokmxNsmbn8s1\nMcK+WSAY+xegjs7EJ8+iSaSUTRtBpu6uWpLhSc8fXwj3P87hQhO5pV7HJwdmdfjP\n4VVFEk5LAt4ieDGJnclDKw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "sofia-165@jeopardy-293618.iam.gserviceaccount.com",
+  "client_id": "109744763153916530914",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sofia-165%40jeopardy-293618.iam.gserviceaccount.com"
+}
