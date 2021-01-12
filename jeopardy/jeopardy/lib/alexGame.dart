@@ -47,6 +47,8 @@ Widget gameMatrix(DocumentSnapshot snapshot, BuildContext context) {
     List questions = [200, 400, 600, 800, 1000];
     Widget clues = GridView.builder(
       itemCount: 5,
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       gridDelegate:
           new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
       itemBuilder: (BuildContext context, int index) {
@@ -77,7 +79,6 @@ Widget gameMatrix(DocumentSnapshot snapshot, BuildContext context) {
                 }),
             color: Colors.blue);
       },
-      shrinkWrap: true,
     );
     matrix.add(clues);
   }
