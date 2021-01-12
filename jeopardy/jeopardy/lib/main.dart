@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'alex.dart';
-import 'player.dart';
+import 'package:provider/provider.dart';
+import 'alexSetup.dart';
+import 'playerSetup.dart';
 import 'dart:math';
+import 'blocs.dart';
+import 'alexGame.dart';
+import 'playerGame.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  @override
+  void initState() {
+    super.initState();
+    mainBloc = MainBloc();
+    mainBloc.rootState = this;
+  }
+
+  @override
+  void dispose() {
+    mainBloc = null;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -24,27 +46,56 @@ class MyApp extends StatelessWidget {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return MaterialApp(
-            title: 'Jeopardy',
-            theme: ThemeData(
-              // This is the theme of your application.
-              //
-              // Try running your application with "flutter run". You'll see the
-              // application has a blue toolbar. Then, without quitting the app, try
-              // changing the primarySwatch below to Colors.green and then invoke
-              // "hot reload" (press "r" in the console where you ran "flutter run",
-              // or simply save your changes to "hot reload" in a Flutter IDE).
-              // Notice that the counter didn't reset back to zero; the application
-              // is not restarted.
-              primarySwatch: Colors.blue,
-            ),
-            home: MyHomePage(),
-            routes: <String, WidgetBuilder>{
-              '/Home': (BuildContext context) => MyHomePage(),
-              '/Alex1': (BuildContext context) => AlexChooseGame(),
-              '/Player1': (BuildContext context) => PlayerJoin(),
-            },
-          );
+          if (mainBloc.gameId == null) {
+            return MaterialApp(
+              title: 'Jeopardy',
+              theme: ThemeData(
+                // This is the theme of your application.
+                //
+                // Try running your application with "flutter run". You'll see the
+                // application has a blue toolbar. Then, without quitting the app, try
+                // changing the primarySwatch below to Colors.green and then invoke
+                // "hot reload" (press "r" in the console where you ran "flutter run",
+                // or simply save your changes to "hot reload" in a Flutter IDE).
+                // Notice that the counter didn't reset back to zero; the application
+                // is not restarted.
+                primarySwatch: Colors.blue,
+              ),
+              home: MyHomePage(),
+              routes: <String, WidgetBuilder>{
+                '/Home': (BuildContext context) => MyHomePage(),
+                '/Alex1': (BuildContext context) => AlexChooseGame(),
+                '/Player1': (BuildContext context) => PlayerJoin(),
+              },
+            );
+          } else {
+            return StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('games')
+                    .doc(mainBloc.gameId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  return Provider.value(
+                    value: snapshot.data,
+                    child: MaterialApp(
+                      title: 'Jeopardy',
+                      theme: ThemeData(
+                        // This is the theme of your application.
+                        //
+                        // Try running your application with "flutter run". You'll see the
+                        // application has a blue toolbar. Then, without quitting the app, try
+                        // changing the primarySwatch below to Colors.green and then invoke
+                        // "hot reload" (press "r" in the console where you ran "flutter run",
+                        // or simply save your changes to "hot reload" in a Flutter IDE).
+                        // Notice that the counter didn't reset back to zero; the application
+                        // is not restarted.
+                        primarySwatch: Colors.blue,
+                      ),
+                      home: mainBloc.isAlex ? AlexGameHome() : PlayerGameHome(),
+                    ),
+                  );
+                });
+          }
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
@@ -52,6 +103,11 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+class GlobalSnapshot {
+  GlobalSnapshot({@required this.snapshot});
+  final DocumentSnapshot snapshot;
 }
 
 class MyHomePage extends StatelessWidget {
@@ -94,11 +150,16 @@ class MyHomePage extends StatelessWidget {
             ),
             RaisedButton(
                 child: Text("Alex (Create game)"),
-                onPressed: () => Navigator.pushNamed(context, '/Alex1')),
+                onPressed: () {
+                  mainBloc.isAlex = true;
+                  Navigator.pushNamed(context, '/Alex1');
+                }),
             RaisedButton(
-              child: Text("Player (Join game)"),
-              onPressed: () => Navigator.pushNamed(context, '/Player1'),
-            ),
+                child: Text("Player (Join game)"),
+                onPressed: () {
+                  mainBloc.isAlex = false;
+                  Navigator.pushNamed(context, '/Player1');
+                }),
           ],
         ),
       ),
@@ -110,4 +171,32 @@ String generateRandomString(int len) {
   var r = Random();
   const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
   return List.generate(len, (index) => _chars[r.nextInt(_chars.length)]).join();
+}
+
+Widget errorWidget(String error) {
+  return Column(children: <Widget>[
+    Icon(
+      Icons.error_outline,
+      color: Colors.red,
+      size: 60,
+    ),
+    Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Text('Error: $error'),
+    )
+  ]);
+}
+
+Widget loadingWidget(String message) {
+  return Column(children: <Widget>[
+    SizedBox(
+      child: CircularProgressIndicator(),
+      width: 60,
+      height: 60,
+    ),
+    Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Text(message),
+    )
+  ]);
 }

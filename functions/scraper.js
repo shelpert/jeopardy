@@ -18,6 +18,7 @@ async function getRound(page, round) {
           question: "",
           answer: "",
           DD: false,
+          done: false
         });
         continue;
       }
@@ -49,6 +50,7 @@ async function getRound(page, round) {
         question: question,
         answer: answer,
         DD: isDD,
+        done: false
       });
     }
     return infoList;

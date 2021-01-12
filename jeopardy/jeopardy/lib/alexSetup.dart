@@ -1,59 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'main.dart';
+import 'blocs.dart';
 
 class AlexChooseGame extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<QuerySnapshot> seasons =
         FirebaseFirestore.instance.collection('seasons').get();
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Choose an episode"),
-        ),
-        body: Center(
-          child: FutureBuilder<QuerySnapshot>(
-            future: seasons, // a previously-obtained Future<String> or null
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              Widget children;
-              if (snapshot.hasData) {
-                List<QueryDocumentSnapshot> seasonList = snapshot.data.docs;
-                children = ListView.builder(
-                  itemBuilder: (BuildContext context, int index) =>
-                      ExpandableWidget(seasonList[index]),
-                  itemCount: seasonList.length,
-                );
-              } else if (snapshot.hasError) {
-                children = Column(children: <Widget>[
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 60,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text('Error: ${snapshot.error}'),
-                  )
-                ]);
-              } else {
-                children = Column(children: <Widget>[
-                  SizedBox(
-                    child: CircularProgressIndicator(),
-                    width: 60,
-                    height: 60,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text('Awaiting result...'),
-                  )
-                ]);
-              }
-              return Center(
+    return FutureBuilder<QuerySnapshot>(
+        future: seasons, // a previously-obtained Future<String> or null
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          Widget children;
+          if (snapshot.hasData) {
+            List<QueryDocumentSnapshot> seasonList = snapshot.data.docs;
+            children = ListView.builder(
+              itemBuilder: (BuildContext context, int index) =>
+                  ExpandableWidget(seasonList[index]),
+              itemCount: seasonList.length,
+            );
+          } else if (snapshot.hasError) {
+            children = errorWidget(snapshot.error);
+          } else {
+            children = loadingWidget("Loading");
+          }
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("Choose an episode"),
+            ),
+            body: Center(
+              child: Center(
                 child: children,
-              );
-            },
-          ),
-        ));
+              ),
+            ),
+          );
+        });
   }
 }
 
@@ -94,29 +74,9 @@ class ExpandableWidget extends StatelessWidget {
                 .toList(),
           );
         } else if (snapshot.hasError) {
-          children = Column(children: <Widget>[
-            Icon(
-              Icons.error_outline,
-              color: Colors.red,
-              size: 60,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Text('Error: ${snapshot.error}'),
-            )
-          ]);
+          children = errorWidget(snapshot.error);
         } else {
-          children = Column(children: <Widget>[
-            SizedBox(
-              child: CircularProgressIndicator(),
-              width: 60,
-              height: 60,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text('Awaiting result...'),
-            )
-          ]);
+          children = loadingWidget("Loading");
         }
         return Center(
           child: children,
@@ -269,7 +229,7 @@ String createNewGame(Map<String, dynamic> episodeInfo) {
   String docId = now + key;
   episodeInfo['key'] = key;
   episodeInfo['status'] = 'waiting';
-  episodeInfo['playerNum'] = 0;
+  episodeInfo['numPlayers'] = 0;
   episodeInfo['players'] = {};
   FirebaseFirestore.instance.collection('games').doc(docId).set(episodeInfo);
   return docId;
@@ -289,7 +249,7 @@ class CreatedGame extends StatelessWidget {
             .doc(docId)
             .snapshots(),
         builder: (context, snapshot) {
-          List<Widget> children;
+          Widget child;
           if (snapshot.hasData) {
             Map<String, dynamic> playerData = snapshot.data['players'];
             String gameKey = snapshot.data['key'];
@@ -303,37 +263,31 @@ class CreatedGame extends StatelessWidget {
                     Text(playerData[playerKeys[i]]['name'] + ' has joined!'));
               }
             }
-            children = <Widget>[
+            List<Widget> children = <Widget>[
               Text(
                 "Your game key is: " + gameKey,
                 style: TextStyle(fontSize: 15, color: Colors.blue),
               )
             ];
             children.addAll(players);
+            children.add(ElevatedButton(
+              child: Text("Start game!"),
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('games')
+                    .doc(docId)
+                    .update({'status': 'playing'});
+                mainBloc.startGame(docId);
+              },
+            ));
+            child = Column(
+              children: children,
+              mainAxisAlignment: MainAxisAlignment.center,
+            );
           } else if (snapshot.hasError) {
-            children = <Widget>[
-              Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 60,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text('Error: ${snapshot.error}'),
-              )
-            ];
+            child = errorWidget(snapshot.error);
           } else {
-            children = <Widget>[
-              SizedBox(
-                child: CircularProgressIndicator(),
-                width: 60,
-                height: 60,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text('Awaiting result...'),
-              )
-            ];
+            child = loadingWidget("Loading");
           }
           return Scaffold(
               appBar: AppBar(
@@ -344,20 +298,15 @@ class CreatedGame extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () {
-                    String gameId = snapshot.data.docs[0].id;
                     FirebaseFirestore.instance
                         .collection('games')
-                        .doc(gameId)
+                        .doc(docId)
                         .update({'status': 'quit'});
                     Navigator.of(context).pop();
                   },
                 ),
               ),
-              body: Center(
-                  child: Column(
-                children: children,
-                mainAxisAlignment: MainAxisAlignment.center,
-              )));
+              body: Center(child: child));
         });
   }
 }
