@@ -10,7 +10,7 @@ class AlexGameHome extends StatelessWidget {
     DocumentSnapshot snapshot = Provider.of<DocumentSnapshot>(context);
     return Scaffold(
       appBar: AppBar(
-          title: Text('Jeopardy Game Home Page'),
+          title: Text('Jeopardy'),
           leading: FlatButton(
               child: Text(
                 "Leave",
@@ -98,23 +98,42 @@ class QuestionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DocumentSnapshot snapshot = Provider.of<DocumentSnapshot>(context);
     return Scaffold(
       appBar: AppBar(
-          title: Text('Jeopardy Game Home Page'),
-          leading: FlatButton(
+        title: Text('Jeopardy'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Text('Question: ' + questionInfo['question']),
+            Text('Answer: ' + questionInfo['answer']),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  child: Text(
+                    "Correct",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {},
+                ),
+                ElevatedButton(
+                  child:
+                      Text("Incorrect", style: TextStyle(color: Colors.white)),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            ElevatedButton(
               child: Text(
-                "Leave",
+                "Skip",
                 style: TextStyle(color: Colors.white),
               ),
-              onPressed: () {
-                FirebaseFirestore.instance
-                    .collection('games')
-                    .doc(mainBloc.gameId)
-                    .update({'status': 'quit'});
-                Navigator.of(context).pop();
-              })),
-      body: Text("HI"),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
